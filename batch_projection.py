@@ -268,15 +268,21 @@ def run_projection_batch_w_only(
             targets=images*255,
             num_steps=num_steps,
             device=device,
-            verbose=False,
+            verbose=True,
             return_list=False
         )
         print (f'Elapsed: {(perf_counter()-start_time):.1f} s')
         w_all.append(projected_w_steps.cpu().numpy())
 
+	# check ponit
+        if i % 10 == 0:
+             w_checkpoint = np.concatenate(w_all, axis=0)
+             print(f'save at batch {i}')
+             np.savez(f'{outdir}/projected_w_checkponit.npz', w=w_checkpoint)
+
     w_all = np.concatenate(w_all, axis=0)
     print (w_all.shape)
-    np.savez(f'{outdir}/projected_w_all2.npz', w=w_all)
+    np.savez(f'{outdir}/projected_w_all.npz', w=w_all)
 
 
 # ----------------------------------------------------------------------------
@@ -291,11 +297,11 @@ if __name__ == "__main__":
     #                      ) # pylint: disable=no-value-for-parameter
 
 
-    run_projection_batch_w_only(network_pkl='../stylegan2-ada-pytorch/stylegan2-afhqv2-512x512.pkl',
+    run_projection_batch_w_only(network_pkl='../projectoer_styleGAN2/stylegan2-afhqv2-512x512.pkl',
                         #  target_folder='../datasets/afhqv2/train',
                             target_folder='../datasets/afhqv2/train',
                             outdir='out_batch',
                             num_steps = 300,
-                            batch_size=32,
+                            batch_size=12,
                             seed=303
                          ) # pylint: disable=no-value-for-parameter
